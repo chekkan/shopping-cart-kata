@@ -1,3 +1,4 @@
+using System;
 using Xunit;
 
 namespace ShoppingCart.UnitTests
@@ -16,7 +17,7 @@ namespace ShoppingCart.UnitTests
         {
             UserId userId = new UserId("foo");
             var sut = new InMemoryBasketRepository();
-            Basket basket = new Basket(userId);
+            Basket basket = new Basket(userId, DateTime.Parse("2020-05-08"));
             sut.Save(basket);
             var actual = sut.GetBasket(userId);
             Assert.Same(basket, actual);
@@ -27,9 +28,9 @@ namespace ShoppingCart.UnitTests
         {
             UserId userId = new UserId("foo");
             var sut = new InMemoryBasketRepository();
-            Basket basket = new Basket(userId);
+            Basket basket = new Basket(userId, DateTime.Parse("2020-05-08"));
             sut.Save(basket);
-            sut.Save(new Basket(new UserId("bar")));
+            sut.Save(new Basket(new UserId("bar"), DateTime.Parse("2020-05-08")));
             var actual = sut.GetBasket(userId);
             Assert.Same(basket, actual);
         }
@@ -39,8 +40,8 @@ namespace ShoppingCart.UnitTests
         {
             var sut = new InMemoryBasketRepository();
             UserId john = new UserId("john");
-            sut.Save(new Basket(john));
-            Basket basket = new Basket(john);
+            sut.Save(new Basket(john, DateTime.Parse("2020-05-08")));
+            Basket basket = new Basket(john, DateTime.Parse("2020-05-08"));
             basket.Add(new BasketItem(new ProductId(20001), 5));
             sut.Save(basket);
             var actual = sut.GetBasket(john);

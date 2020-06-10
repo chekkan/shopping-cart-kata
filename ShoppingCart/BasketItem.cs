@@ -10,18 +10,5 @@ namespace ShoppingCart
             this.productId = productId;
             this.quantity = quantity;
         }
-
-        public override bool Equals(object obj)
-        {
-            var item = obj as BasketItem;
-            if(item == null)
-            {
-                return false;
-            }
-            return item.productId == productId && item.quantity == quantity;
-        }
-
-        public override int GetHashCode() 
-            => productId.GetHashCode() ^ quantity.GetHashCode();
     }
 }
