@@ -11,6 +11,14 @@ namespace ShoppingCart.UnitTests
         private static ProductId lor = new ProductId(10001);
         private static ProductId hobbit = new ProductId(10002);
         private static DateTime creationDate = DateTime.Parse("2020-05-11");
+        private readonly StockController stockController;
+
+        public ShoppingBasketServiceTests()
+        {
+            stockController = new StockController();
+            stockController.AddProduct(lor, 5);
+            stockController.AddProduct(hobbit, 5);
+        }
 
         [Fact]
         public void AddingItemCreatesBasket()
@@ -26,9 +34,10 @@ namespace ShoppingCart.UnitTests
             var basketFactoryMock = new Mock<IBasketFactory>();
             basketFactoryMock.Setup(factory => factory.Create(john))
                 .Returns(expected);
-            
+
             var sut = new ShoppingBasketService(repoMock.Object,
-                                                basketFactoryMock.Object);
+                                                basketFactoryMock.Object,
+                                                stockController);
             sut.AddItem(john, lor, quantity);
             repoMock.Verify((repo) => repo.Save(expected));
             Assert.Equal(1, expected.Items.Count);
@@ -46,11 +55,56 @@ namespace ShoppingCart.UnitTests
             var basketFactoryMock = new Mock<IBasketFactory>();
 
             var sut = new ShoppingBasketService(repoMock.Object,
-                                                basketFactoryMock.Object);
+                                                basketFactoryMock.Object,
+                                                stockController);
             sut.AddItem(ryan, hobbit, quantity);
-            
+
             repoMock.Verify(repo => repo.Save(existingBasket));
             Assert.Equal(1, existingBasket.Items.Count);
+        }
+
+        [Fact]
+        public void ThrowsExceptionWhenOutOfStock()
+        {
+            var repoMock = new Mock<IBasketRepository>();
+            var basketFactoryMock = new Mock<IBasketFactory>();
+            var stock = new StockController();
+            stock.AddProduct(hobbit, 20);
+            var sut = new ShoppingBasketService(repoMock.Object,
+                                                basketFactoryMock.Object,
+                                                stock);
+
+            Assert.Throws<OutOfStockException>(() => sut.AddItem(ryan, hobbit, 21));
+        }
+
+        [Fact]
+        public void ReservesProductAfterSuccessfullySaving()
+        {
+            var repoMock = new Mock<IBasketRepository>();
+            var basketFactoryMock = new Mock<IBasketFactory>();
+            basketFactoryMock.Setup(factory => factory.Create(ryan))
+                .Returns(new Basket(ryan, DateTime.Parse("2012-02-12")));
+            var sut = new ShoppingBasketService(repoMock.Object,
+                                                basketFactoryMock.Object,
+                                                stockController);
+            sut.AddItem(ryan, hobbit, 5);
+            Assert.False(stockController.CheckAvailability(hobbit, 1));
+        }
+
+        [Fact]
+        public void ReserveIsCalledOnlyAfterSave()
+        {
+            Basket basket = new Basket(ryan, DateTime.Parse("2012-02-12"));
+            var repoMock = new Mock<IBasketRepository>();
+            repoMock.Setup(repo => repo.Save(basket)).Throws(new Exception());
+            var basketFactoryMock = new Mock<IBasketFactory>();
+            basketFactoryMock.Setup(factory => factory.Create(ryan))
+                .Returns(basket);
+            var sut = new ShoppingBasketService(repoMock.Object,
+                                                basketFactoryMock.Object,
+                                                stockController);
+            Assert.Throws<Exception>(() => sut.AddItem(ryan, hobbit, 5));
+            Assert.True(stockController.CheckAvailability(hobbit, 5));
         }
     }
 }
