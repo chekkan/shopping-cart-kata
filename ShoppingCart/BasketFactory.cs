@@ -1,6 +1,6 @@
 #nullable enable
 
-using System;
+using System.IO;
 
 namespace ShoppingCart
 {
@@ -14,6 +14,6 @@ namespace ShoppingCart
         }
 
         public Basket Create(UserId userId) 
-            => new Basket(userId, clock.Now);
+            => new BasketLogger(new StringWriter(), userId, clock.Now);
     }
 }

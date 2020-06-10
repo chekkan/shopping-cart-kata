@@ -25,5 +25,14 @@ namespace ShoppingCart.UnitTests
             Assert.Equal(DateTime.Parse(aDate), actual.CreationDate);
             Assert.Same(userId, actual.UserId);
         }
+
+        [Fact]
+        public void CreateReturnsBasketLogger()
+        {
+            var clock = new ManualClock(DateTime.Parse("2019-09-21"));
+            var sut = new BasketFactory(clock);
+            var actual = sut.Create(new UserId("john"));
+            Assert.IsType<BasketLogger>(actual);
+        }
     }
 }
