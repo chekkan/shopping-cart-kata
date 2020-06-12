@@ -46,5 +46,13 @@ namespace ShoppingCart.UnitTests
             sut.Add(new BasketItem(new ProductId(pId), 1));
             Assert.Equal((10m + price) * .8m, sut.Total);
         }
+
+        [Fact]
+        public void MultiBuyDiscount_BothApplyChooseBiggest()
+        {
+            sut.Add(new BasketItem(new ProductId(10001), 4));
+            sut.Add(new BasketItem(new ProductId(20001), 1));
+            Assert.Equal((10m * 4 + 9m) * .8m, sut.Total);
+        }
     }
 }

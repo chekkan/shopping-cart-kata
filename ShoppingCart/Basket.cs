@@ -49,11 +49,11 @@ namespace ShoppingCart
                 .Sum(item => item.Quantity);
             int noOfDvds = items.Where(item => item.ProductId.Type == ProductTypes.Dvd)
                 .Sum(i => i.Quantity);
-            if (noOfBooks > 3) {
-                return total * .9m;
-            }
             if (noOfBooks >= 1 && noOfDvds >= 1) {
                 return total * .8m;
+            }
+            if (noOfBooks > 3) {
+                return total * .9m;
             }
             return total;
         }
