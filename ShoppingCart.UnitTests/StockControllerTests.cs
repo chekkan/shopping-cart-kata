@@ -55,5 +55,14 @@ namespace ShoppingCart.UnitTests
             sut.Reserve(lor, quantity);
             Assert.False(sut.CheckAvailability(lor, 1));
         }
+
+        [Fact]
+        public void PriceForDvds()
+        {
+            var sut = new StockController();
+            sut.AddProduct(new ProductId(20001), 1);
+            var actual = sut.PriceFor(new ProductId(20001));
+            Assert.Equal(9m, actual);
+        }
     }
 }

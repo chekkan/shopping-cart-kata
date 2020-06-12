@@ -6,10 +6,18 @@ namespace ShoppingCart
     public class StockController
     {
         private Dictionary<ProductId, int> stocks;
-        
+        private Dictionary<ProductId, decimal> prices;
+
         public StockController()
         {
             this.stocks = new Dictionary<ProductId, int>();
+            this.prices = new Dictionary<ProductId, decimal>()
+            {
+                {new ProductId(10001), 10m},
+                {new ProductId(10002), 5m},
+                {new ProductId(20001), 9m},
+                {new ProductId(20110), 7m}
+            };
         }
 
         public void AddProduct(ProductId productId, int quantity)
@@ -30,11 +38,7 @@ namespace ShoppingCart
             this.stocks[product.Key] -= quantity;
         }
 
-        internal decimal PriceFor(ProductId productId)
-        {
-            return productId == new ProductId(10001)
-                ? 10m
-                : 5m;
-        }
+        public decimal PriceFor(ProductId productId) 
+            => prices[productId];
     }
 }

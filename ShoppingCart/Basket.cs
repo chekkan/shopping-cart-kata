@@ -41,8 +41,21 @@ namespace ShoppingCart
             this.stock = stock;
         }
 
-        public decimal Calculate(IReadOnlyCollection<BasketItem> items) 
-            => items.Select(item => item.Quantity * this.stock.PriceFor(item.ProductId))
-                    .Sum();
+        public decimal Calculate(IReadOnlyCollection<BasketItem> items)
+        {
+            var total = items.Select(item => item.Quantity * this.stock.PriceFor(item.ProductId))
+                .Sum();
+            int noOfBooks = items.Where(item => item.ProductId.Type == ProductTypes.Book)
+                .Sum(item => item.Quantity);
+            int noOfDvds = items.Where(item => item.ProductId.Type == ProductTypes.Dvd)
+                .Sum(i => i.Quantity);
+            if (noOfBooks > 3) {
+                return total * .9m;
+            }
+            if (noOfBooks >= 1 && noOfDvds >= 1) {
+                return total * .8m;
+            }
+            return total;
+        }
     }
 }

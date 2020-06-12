@@ -4,6 +4,10 @@ namespace ShoppingCart
     {
         private readonly int id;
 
+        public ProductTypes Type => id.ToString().StartsWith("2") 
+            ? ProductTypes.Dvd 
+            : ProductTypes.Book;
+
         public ProductId(int id)
         {
             this.id = id;
@@ -24,5 +28,11 @@ namespace ShoppingCart
             => !(x == y);
 
         public override string ToString() => this.id.ToString();
+    }
+
+    public enum ProductTypes
+    {
+        Book,
+        Dvd
     }
 }
