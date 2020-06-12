@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ShoppingCart
 {
@@ -16,10 +17,32 @@ namespace ShoppingCart
 
         public UserId UserId { get; }
         public DateTime CreationDate { get; set; }
+        public decimal Total
+        {
+            get
+            {
+                return new BasketCalculator(new StockController())
+                    .Calculate(this.Items);
+            }
+        }
 
         public void Add(BasketItem item)
         {
             this.items.Add(item);
         }
+    }
+
+    public class BasketCalculator
+    {
+        private readonly StockController stock;
+
+        public BasketCalculator(StockController stock)
+        {
+            this.stock = stock;
+        }
+
+        public decimal Calculate(IReadOnlyCollection<BasketItem> items) 
+            => items.Select(item => item.Quantity * this.stock.PriceFor(item.ProductId))
+                    .Sum();
     }
 }

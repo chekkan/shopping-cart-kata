@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,7 +5,6 @@ namespace ShoppingCart
 {
     public class StockController
     {
-        private int quantity;
         private Dictionary<ProductId, int> stocks;
         
         public StockController()
@@ -30,6 +28,13 @@ namespace ShoppingCart
         {
             var product = this.stocks.First(stock => stock.Key == productId);
             this.stocks[product.Key] -= quantity;
+        }
+
+        internal decimal PriceFor(ProductId productId)
+        {
+            return productId == new ProductId(10001)
+                ? 10m
+                : 5m;
         }
     }
 }
