@@ -23,7 +23,7 @@ namespace ShoppingCart
             {
                 this.paymentGateway.Pay(order, userId, payment);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new PaymentFailure();
             }

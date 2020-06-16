@@ -8,5 +8,7 @@ namespace ShoppingCart
         {
             this.id = id;
         }
+
+        public OrderId Id => id;
     }
 }
