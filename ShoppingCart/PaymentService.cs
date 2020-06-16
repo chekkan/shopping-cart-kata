@@ -19,7 +19,14 @@ namespace ShoppingCart
                                 PaymentDetails payment)
         {
             var order = this.orderService.Create(userId, cartId);
-            this.paymentGateway.Pay(order, userId, payment);
+            try
+            {
+                this.paymentGateway.Pay(order, userId, payment);
+            }
+            catch (Exception e)
+            {
+                throw new PaymentFailure();
+            }
         }
     }
 }
