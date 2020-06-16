@@ -6,17 +6,25 @@ namespace ShoppingCart.UnitTests
 {
     public class PaymentServiceTests
     {
+        private readonly UserId john;
+        private readonly ShoppingCartId cartId;
+        private readonly PaymentDetails payment;
+        private readonly Mock<IPaymentGateway> paymentGatewayMock;
+        private readonly Mock<IOrderService> orderSvcMock;
+
+        public PaymentServiceTests()
+        {
+            this.john = new UserId("john");
+            this.cartId = new ShoppingCartId(Guid.NewGuid().ToString());
+            this.payment = new PaymentDetails();
+            this.orderSvcMock = new Mock<IOrderService>();
+            this.paymentGatewayMock = new Mock<IPaymentGateway>();
+        }
+
         [Fact]
         public void CallsPaymentGatewayWithOrder()
         {
-            var john = new UserId("john");
-            var cartId = new ShoppingCartId(Guid.NewGuid().ToString());
-            var payment = new PaymentDetails();
             var order = new Order(new OrderId(Guid.NewGuid().ToString()));
-
-            var paymentGatewayMock = new Mock<IPaymentGateway>();
-
-            var orderSvcMock = new Mock<IOrderService>();
             orderSvcMock.Setup(svc => svc.Create(john, cartId))
                         .Returns(order);
 
@@ -31,13 +39,7 @@ namespace ShoppingCart.UnitTests
         [Fact]
         public void ThrowPaymentFailureException()
         {
-            var john = new UserId("john");
-            var cartId = new ShoppingCartId(Guid.NewGuid().ToString());
-            var payment = new PaymentDetails();
-
-            var orderSvcMock = new Mock<IOrderService>();
-            var paymentGatewayMock = new Mock<IPaymentGateway>();
-            paymentGatewayMock.Setup(gw => gw.Pay(It.IsAny<Order>(), john, payment))
+             paymentGatewayMock.Setup(gw => gw.Pay(It.IsAny<Order>(), john, payment))
                 .Throws(new Exception());
 
             var sut = new PaymentService(
