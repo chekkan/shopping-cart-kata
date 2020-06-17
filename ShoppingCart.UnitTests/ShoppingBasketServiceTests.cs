@@ -14,7 +14,6 @@ namespace ShoppingCart.UnitTests
         private readonly Inventory inventory;
         private readonly Basket johnsBasket;
         private readonly Basket ryansBasket;
-        private readonly StockController stockController;
         private readonly Mock<IBasketRepository> repoMock;
         private readonly Mock<IBasketFactory> basketFactoryMock;
         private readonly ShoppingBasketService sut;
@@ -25,7 +24,6 @@ namespace ShoppingCart.UnitTests
             this.inventory.Add(lor, 5, 10m);
             this.inventory.Add(hobbit, 5, 5m);
 
-            this.stockController = new StockController(inventory);
             this.johnsBasket = new Basket(john,
                                           DateTime.Parse("2020-05-11"),
                                           this.inventory);
@@ -37,7 +35,7 @@ namespace ShoppingCart.UnitTests
             this.basketFactoryMock = new Mock<IBasketFactory>();
             this.sut = new ShoppingBasketService(repoMock.Object,
                                                  basketFactoryMock.Object,
-                                                 stockController);
+                                                 inventory);
         }
 
         [Fact]
@@ -79,7 +77,7 @@ namespace ShoppingCart.UnitTests
                 .Returns(ryansBasket);
 
             sut.AddItem(ryan, hobbit, 5);
-            Assert.False(stockController.CheckAvailability(hobbit, 1));
+            Assert.False(this.inventory.CheckAvailability(hobbit, 1));
         }
 
         [Fact]
@@ -91,7 +89,7 @@ namespace ShoppingCart.UnitTests
                 .Returns(ryansBasket);
 
             Assert.Throws<Exception>(() => sut.AddItem(ryan, hobbit, 5));
-            Assert.True(stockController.CheckAvailability(hobbit, 5));
+            Assert.True(this.inventory.CheckAvailability(hobbit, 5));
         }
 
         [Fact]

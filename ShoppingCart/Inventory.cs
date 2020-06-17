@@ -19,6 +19,11 @@ namespace ShoppingCart
             this.items.Add(new InventoryItem(productId, quantity, price));
         }
 
+        public bool CheckAvailability(ProductId productId, int quantity)
+        {
+            return AvailableQuantity(productId) >= quantity;
+        }
+
         public int AvailableQuantity(ProductId productId)
         {
             var product = this.items.SingleOrDefault(i => i.ProductId == productId);
@@ -42,10 +47,7 @@ namespace ShoppingCart
             var product = GetProduct(productId);
             var sellCount = product.ReservedCount - quantity;
             product.ReservedCount = Math.Max(0, sellCount);
-            if (sellCount < 0)
-            {
-                product.Quantity += sellCount;
-            }
+            product.Quantity -= quantity;
         }
 
         public void Print(TextWriter writer)

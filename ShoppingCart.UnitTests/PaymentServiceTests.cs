@@ -67,7 +67,7 @@ namespace ShoppingCart.UnitTests
             var order = new Order(new OrderId(Guid.NewGuid().ToString()), basket);
             orderSvcMock.Setup(svc => svc.Create(ryan, cartId))
                 .Returns(order);
-            this.inventory.Reserve(lordOfTheRings, 4);
+            this.inventory.Reserve(lordOfTheRings, 2);
 
             this.sut.MakePayment(ryan, cartId, payment);
             Assert.Equal(2, this.inventory.AvailableQuantity(lordOfTheRings));
@@ -85,7 +85,7 @@ namespace ShoppingCart.UnitTests
             var order = new Order(new OrderId(Guid.NewGuid().ToString()), basket);
             orderSvcMock.Setup(svc => svc.Create(ryan, cartId))
                 .Returns(order);
-            this.inventory.Reserve(lordOfTheRings, 4);
+            this.inventory.Reserve(lordOfTheRings, 2);
 
             this.sut.MakePayment(ryan, cartId, payment);
             Assert.Equal(2, this.inventory.AvailableQuantity(lordOfTheRings));

@@ -6,22 +6,22 @@ namespace ShoppingCart
     {
         private readonly IBasketRepository basketRepository;
         private readonly IBasketFactory basketFactory;
-        private readonly StockController stockController;
+        private readonly Inventory inventory;
 
         public ShoppingBasketService(IBasketRepository basketRepository,
                                      IBasketFactory basketFactory,
-                                     StockController stockController)
+                                     Inventory inventory)
         {
             this.basketRepository = basketRepository;
             this.basketFactory = basketFactory;
-            this.stockController = stockController;
+            this.inventory = inventory;
         }
 
         public void AddItem(UserId userId,
                             ProductId productId,
                             int quantity)
         {
-            if (!this.stockController.CheckAvailability(productId, quantity))
+            if (!this.inventory.CheckAvailability(productId, quantity))
             {
                 throw new OutOfStockException();
             }
@@ -32,7 +32,7 @@ namespace ShoppingCart
             }
             basket.Add(new BasketItem(productId, quantity));
             this.basketRepository.Save(basket);
-            this.stockController.Reserve(productId, quantity);
+            this.inventory.Reserve(productId, quantity);
         }
 
         public Basket BasketFor(UserId userId)

@@ -25,11 +25,10 @@ namespace ShoppingCart.App
             var basketFactory = new BasketFactory(new SystemClock(),
                                                   Console.Out,
                                                   inventory);
-            var stockController = new StockController(inventory);
             var shoppingBasketService = new ShoppingBasketService(
                 basketRepository,
                 basketFactory,
-                stockController);
+                inventory);
 
             // No discounts
             shoppingBasketService.AddItem(john, lordOfTheRings, 1);
@@ -44,10 +43,12 @@ namespace ShoppingCart.App
             Console.WriteLine($"Kim's basket total: {kimsCart.Total:c}");
 
             var johnsPayment = new PaymentDetails();
-            var orderService = new OrderService(new OrderIdGenerator());
+            var orderService = new OrderService(new OrderIdGenerator(), basketRepository);
             var paymentGateway = new PretendPaymentGateway();
-            var paymentService = new PaymentService(orderService, paymentGateway);
+            var paymentService = new PaymentService(orderService, paymentGateway, inventory);
             paymentService.MakePayment(john, johnsCart.Id, johnsPayment);
+
+            inventory.Print(Console.Out);
         }
     }
 
