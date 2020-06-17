@@ -14,16 +14,14 @@ namespace ShoppingCart
 
         public bool CheckAvailability(ProductId productId, int quantity)
         {
-            var stockQty = this.inventory.QuantityFor(productId);
-            return stockQty != null && stockQty >= quantity;
+            return this.inventory.AvailableQuantity(productId) >= quantity;
         }
 
         public void Reserve(ProductId productId, int quantity)
         {
-            var stockQty = this.inventory.QuantityFor(productId);
-            if (stockQty != null)
+            if (this.CheckAvailability(productId, quantity))
             {
-                this.inventory.SetQuantityFor(productId, stockQty.Value - quantity);
+                this.inventory.Reserve(productId, quantity);
             }
         }
     }

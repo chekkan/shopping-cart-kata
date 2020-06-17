@@ -19,10 +19,12 @@ namespace ShoppingCart
             this.items.Add(new InventoryItem(productId, quantity, price));
         }
 
-        public int? QuantityFor(ProductId productId)
+        public int AvailableQuantity(ProductId productId)
         {
-            return this.items
-                .SingleOrDefault(i => i.ProductId == productId)?.Quantity;
+            var product = this.items.SingleOrDefault(i => i.ProductId == productId);
+            return product != null
+                ? product.Quantity - product.ReservedCount
+                : 0;
         }
 
         public decimal PriceFor(ProductId productId)
@@ -31,9 +33,10 @@ namespace ShoppingCart
                 .Single(i => i.ProductId == productId).Price;
         }
 
-        public void SetQuantityFor(ProductId productId, int value)
+        public void Reserve(ProductId productId, int value)
         {
-            this.items.SingleOrDefault(i => i.ProductId == productId).Quantity = value;
+            this.items.Single(i => i.ProductId == productId)
+                .ReservedCount = value;
         }
 
         public void Print(TextWriter writer)
@@ -58,6 +61,7 @@ namespace ShoppingCart
             public ProductId ProductId { get; }
             public decimal Price { get; }
             public int Quantity { get; set; }
+            public int ReservedCount { get; set; }
         }
     }
 }
