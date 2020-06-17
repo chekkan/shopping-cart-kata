@@ -108,5 +108,21 @@ namespace ShoppingCart.UnitTests
             Assert.Throws<Exception>(() => sut.AddItem(ryan, hobbit, 5));
             Assert.True(stockController.CheckAvailability(hobbit, 5));
         }
+
+        [Fact]
+        public void BasketFor_ReturnsBasketFromRepository()
+        {
+            var expected = new Basket(john, DateTime.Parse("2012-02-12"));
+            var repoMock = new Mock<IBasketRepository>();
+            repoMock.Setup(repo => repo.GetBasket(john))
+                .Returns(expected);
+            var basketFacMock = new Mock<IBasketFactory>();
+
+            var sut = new ShoppingBasketService(repoMock.Object,
+                                                basketFacMock.Object,
+                                                stockController);
+            var basket = sut.BasketFor(john);
+            Assert.Equal(expected, basket);
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace ShoppingCart
+﻿using System;
+
+namespace ShoppingCart
 {
     public class ShoppingBasketService
     {
@@ -32,5 +34,8 @@
             this.basketRepository.Save(basket);
             this.stockController.Reserve(productId, quantity);
         }
+
+        public Basket BasketFor(UserId userId)
+            => this.basketRepository.GetBasket(userId);
     }
 }
