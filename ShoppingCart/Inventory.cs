@@ -29,14 +29,23 @@ namespace ShoppingCart
 
         public decimal PriceFor(ProductId productId)
         {
-            return this.items
-                .Single(i => i.ProductId == productId).Price;
+            return GetProduct(productId).Price;
         }
 
-        public void Reserve(ProductId productId, int value)
+        public void Reserve(ProductId productId, int quantity)
         {
-            this.items.Single(i => i.ProductId == productId)
-                .ReservedCount = value;
+            GetProduct(productId).ReservedCount = quantity;
+        }
+
+        public void Sold(ProductId productId, int quantity)
+        {
+            var product = GetProduct(productId);
+            var sellCount = product.ReservedCount - quantity;
+            product.ReservedCount = Math.Max(0, sellCount);
+            if (sellCount < 0)
+            {
+                product.Quantity += sellCount;
+            }
         }
 
         public void Print(TextWriter writer)
@@ -47,6 +56,11 @@ namespace ShoppingCart
                 writer.Write($"{item.Price:c} | ".PadLeft(9, ' '));
                 writer.WriteLine($"{item.Quantity}");
             }
+        }
+
+        private InventoryItem GetProduct(ProductId productId)
+        {
+            return this.items.Single(i => i.ProductId == productId);
         }
 
         private class InventoryItem
