@@ -10,10 +10,10 @@ namespace ShoppingCart.UnitTests
         private static UserId ryan = new UserId("ryan");
         private static ProductId lor = new ProductId(10001);
         private static ProductId hobbit = new ProductId(10002);
-        private static Basket johnsBasket = new Basket(john,
-                                                       DateTime.Parse("2020-05-11"));
-        private static Basket ryansBasket = new Basket(ryan,
-                                                       DateTime.Parse("2012-02-12"));
+
+        private readonly Inventory inventory;
+        private readonly Basket johnsBasket;
+        private readonly Basket ryansBasket;
         private readonly StockController stockController;
         private readonly Mock<IBasketRepository> repoMock;
         private readonly Mock<IBasketFactory> basketFactoryMock;
@@ -21,14 +21,23 @@ namespace ShoppingCart.UnitTests
 
         public ShoppingBasketServiceTests()
         {
-            var inventory = new Inventory();
-            inventory.Add(lor, 5);
-            inventory.Add(hobbit, 5);
-            stockController = new StockController(inventory);
-            repoMock = new Mock<IBasketRepository>();
-            basketFactoryMock = new Mock<IBasketFactory>();
-            sut = new ShoppingBasketService(repoMock.Object, basketFactoryMock.Object,
-                                            stockController);
+            this.inventory = new Inventory();
+            this.inventory.Add(lor, 5, 10m);
+            this.inventory.Add(hobbit, 5, 5m);
+
+            this.stockController = new StockController(inventory);
+            this.johnsBasket = new Basket(john,
+                                          DateTime.Parse("2020-05-11"),
+                                          this.inventory);
+            this.ryansBasket = new Basket(ryan,
+                                          DateTime.Parse("2012-02-12"),
+                                          this.inventory);
+
+            this.repoMock = new Mock<IBasketRepository>();
+            this.basketFactoryMock = new Mock<IBasketFactory>();
+            this.sut = new ShoppingBasketService(repoMock.Object,
+                                                 basketFactoryMock.Object,
+                                                 stockController);
         }
 
         [Fact]

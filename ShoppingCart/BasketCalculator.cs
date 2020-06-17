@@ -5,20 +5,22 @@ namespace ShoppingCart
 {
     public class BasketCalculator
     {
-        private readonly StockController stock;
+        private readonly Inventory inventory;
 
-        public BasketCalculator(StockController stock)
+        public BasketCalculator(Inventory inventory)
         {
-            this.stock = stock;
+            this.inventory = inventory;
         }
 
         public decimal Calculate(IReadOnlyCollection<BasketItem> items)
         {
-            var total = items.Select(item => item.Quantity * this.stock.PriceFor(item.ProductId))
-                .Sum();
-            int noOfBooks = items.Where(item => item.ProductId.Type == ProductTypes.Book)
+            var total = items
+                .Sum(item => item.Quantity * this.inventory.PriceFor(item.ProductId));
+            int noOfBooks = items
+                .Where(item => item.ProductId.Type == ProductTypes.Book)
                 .Sum(item => item.Quantity);
-            int noOfDvds = items.Where(item => item.ProductId.Type == ProductTypes.Dvd)
+            int noOfDvds = items
+                .Where(item => item.ProductId.Type == ProductTypes.Dvd)
                 .Sum(i => i.Quantity);
             if (noOfBooks >= 1 && noOfDvds >= 1) {
                 return total * .8m;

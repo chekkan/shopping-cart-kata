@@ -7,8 +7,11 @@ namespace ShoppingCart
     {
         private readonly TextWriter writer;
 
-        public BasketLogger(TextWriter writer, UserId userId, DateTime creationDate)
-            : base(userId, creationDate)
+        public BasketLogger(TextWriter writer,
+                            UserId userId,
+                            DateTime creationDate,
+                            Inventory inventory)
+            : base(userId, creationDate, inventory)
         {
             this.writer = writer;
         }

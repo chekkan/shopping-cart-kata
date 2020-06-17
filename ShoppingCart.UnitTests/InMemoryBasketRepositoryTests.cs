@@ -5,6 +5,14 @@ namespace ShoppingCart.UnitTests
 {
     public class InMemoryBasketRepositoryTests
     {
+        private static DateTime creationDate = DateTime.Parse("2020-05-08");
+        private readonly Inventory inventory;
+
+        public InMemoryBasketRepositoryTests()
+        {
+            this.inventory = new Inventory();
+        }
+
         [Fact]
         public void ImplementsIBasketRepository()
         {
@@ -17,7 +25,7 @@ namespace ShoppingCart.UnitTests
         {
             UserId userId = new UserId("foo");
             var sut = new InMemoryBasketRepository();
-            Basket basket = new Basket(userId, DateTime.Parse("2020-05-08"));
+            Basket basket = new Basket(userId, creationDate, this.inventory);
             sut.Save(basket);
             var actual = sut.GetBasket(userId);
             Assert.Same(basket, actual);
@@ -28,9 +36,9 @@ namespace ShoppingCart.UnitTests
         {
             UserId userId = new UserId("foo");
             var sut = new InMemoryBasketRepository();
-            Basket basket = new Basket(userId, DateTime.Parse("2020-05-08"));
+            Basket basket = new Basket(userId, creationDate, this.inventory);
             sut.Save(basket);
-            sut.Save(new Basket(new UserId("bar"), DateTime.Parse("2020-05-08")));
+            sut.Save(new Basket(new UserId("bar"), creationDate, this.inventory));
             var actual = sut.GetBasket(userId);
             Assert.Same(basket, actual);
         }
@@ -40,8 +48,8 @@ namespace ShoppingCart.UnitTests
         {
             var sut = new InMemoryBasketRepository();
             UserId john = new UserId("john");
-            sut.Save(new Basket(john, DateTime.Parse("2020-05-08")));
-            Basket basket = new Basket(john, DateTime.Parse("2020-05-08"));
+            sut.Save(new Basket(john, creationDate, this.inventory));
+            Basket basket = new Basket(john, creationDate, this.inventory);
             basket.Add(new BasketItem(new ProductId(20001), 5));
             sut.Save(basket);
             var actual = sut.GetBasket(john);

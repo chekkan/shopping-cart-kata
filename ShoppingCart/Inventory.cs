@@ -14,15 +14,21 @@ namespace ShoppingCart
             this.items = new List<InventoryItem>();
         }
 
-        public void Add(ProductId productId, int quantity)
+        public void Add(ProductId productId, int quantity, decimal price)
         {
-            this.items.Add(new InventoryItem(productId, quantity));
+            this.items.Add(new InventoryItem(productId, quantity, price));
         }
 
         public int? QuantityFor(ProductId productId)
         {
             return this.items
                 .SingleOrDefault(i => i.ProductId == productId)?.Quantity;
+        }
+
+        public decimal PriceFor(ProductId productId)
+        {
+            return this.items
+                .Single(i => i.ProductId == productId).Price;
         }
 
         public void SetQuantityFor(ProductId productId, int value)
@@ -34,19 +40,23 @@ namespace ShoppingCart
         {
             foreach(var item in this.items)
             {
-                writer.WriteLine($"{item.Quantity} x ProductId({item.ProductId})");
+                writer.Write($"ProductId({item.ProductId}) | ");
+                writer.Write($"{item.Price:c} | ".PadLeft(9, ' '));
+                writer.WriteLine($"{item.Quantity}");
             }
         }
 
         private class InventoryItem
         {
-            public InventoryItem(ProductId productId, int quantity)
+            public InventoryItem(ProductId productId, int quantity, decimal price)
             {
                 this.ProductId = productId;
                 this.Quantity = quantity;
+                this.Price = price;
             }
 
             public ProductId ProductId { get; }
+            public decimal Price { get; }
             public int Quantity { get; set; }
         }
     }

@@ -11,7 +11,7 @@ namespace ShoppingCart.UnitTests
         {
             var inventory = new Inventory();
             ProductId lor = new ProductId(1001);
-            inventory.Add(lor, 20);
+            inventory.Add(lor, 20, 10m);
             var sut = new StockController(inventory);
             Assert.True(sut.CheckAvailability(lor, quantity));
         }
@@ -23,7 +23,7 @@ namespace ShoppingCart.UnitTests
         {
             var inventory = new Inventory();
             var hobbit = new ProductId(1002);
-            inventory.Add(hobbit, 10);
+            inventory.Add(hobbit, 10, 5m);
             var sut = new StockController(inventory);
             Assert.False(sut.CheckAvailability(hobbit, quantity));
         }
@@ -34,8 +34,8 @@ namespace ShoppingCart.UnitTests
             var inventory = new Inventory();
             var hobbit = new ProductId(1002);
             var lor = new ProductId(1001);
-            inventory.Add(hobbit, 10);
-            inventory.Add(lor, 20);
+            inventory.Add(hobbit, 10, 5m);
+            inventory.Add(lor, 20, 10m);
             var sut = new StockController(inventory);
             Assert.False(sut.CheckAvailability(hobbit, 11));
         }
@@ -55,21 +55,10 @@ namespace ShoppingCart.UnitTests
         {
             var inventory = new Inventory();
             ProductId lor = new ProductId(1002);
-            inventory.Add(lor, quantity);
+            inventory.Add(lor, quantity, 10m);
             var sut = new StockController(inventory);
             sut.Reserve(lor, quantity);
             Assert.False(sut.CheckAvailability(lor, 1));
-        }
-
-        [Fact]
-        public void PriceForDvds()
-        {
-            var inventory = new Inventory();
-            inventory.Add(new ProductId(20001), 1);
-
-            var sut = new StockController(inventory);
-            var actual = sut.PriceFor(new ProductId(20001));
-            Assert.Equal(9m, actual);
         }
     }
 }

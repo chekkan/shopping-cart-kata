@@ -12,17 +12,19 @@ namespace ShoppingCart.App
             var breakingBad = new ProductId(20110);
 
             var inventory = new Inventory();
-            inventory.Add(lordOfTheRings, 10);
-            inventory.Add(theHobbit, 12);
-            inventory.Add(gameOfThrones, 8);
-            inventory.Add(breakingBad, 14);
+            inventory.Add(lordOfTheRings, 10, 10m);
+            inventory.Add(theHobbit, 12, 5m);
+            inventory.Add(gameOfThrones, 8, 9m);
+            inventory.Add(breakingBad, 14, 7m);
             inventory.Print(Console.Out);
 
             var john = new UserId("john");
             var kim = new UserId("kim");
 
             var basketRepository = new InMemoryBasketRepository();
-            var basketFactory = new BasketFactory(new SystemClock(), Console.Out);
+            var basketFactory = new BasketFactory(new SystemClock(),
+                                                  Console.Out,
+                                                  inventory);
             var stockController = new StockController(inventory);
             var shoppingBasketService = new ShoppingBasketService(
                 basketRepository,
@@ -31,15 +33,15 @@ namespace ShoppingCart.App
 
             // No discounts
             shoppingBasketService.AddItem(john, lordOfTheRings, 1);
-            shoppingBasketService.AddItem(john, breakingBad, 1);
+            shoppingBasketService.AddItem(john, theHobbit, 1);
 
-            shoppingBasketService.AddItem(kim, theHobbit, 1);
+            shoppingBasketService.AddItem(kim, breakingBad, 1);
 
             var johnsCart = shoppingBasketService.BasketFor(john);
             var kimsCart = shoppingBasketService.BasketFor(kim);
 
-            Console.WriteLine($"John's basket total: {johnsCart.Total}");
-            Console.WriteLine($"Kim's basket total: {kimsCart.Total}");
+            Console.WriteLine($"John's basket total: {johnsCart.Total:c}");
+            Console.WriteLine($"Kim's basket total: {kimsCart.Total:c}");
 
             var johnsPayment = new PaymentDetails();
             var orderService = new OrderService(new OrderIdGenerator());

@@ -6,10 +6,12 @@ namespace ShoppingCart
     public class Basket
     {
         private List<BasketItem> items;
-        public IReadOnlyCollection<BasketItem> Items => this.items;
-        public Basket(UserId userId, DateTime creationDate)
+        private readonly Inventory inventory;
+
+        public Basket(UserId userId, DateTime creationDate, Inventory inventory)
         {
-            items = new List<BasketItem>();
+            this.items = new List<BasketItem>();
+            this.inventory = inventory;
             UserId = userId;
             CreationDate = creationDate;
             Id = new ShoppingCartId(Guid.NewGuid().ToString());
@@ -19,14 +21,10 @@ namespace ShoppingCart
         public DateTime CreationDate { get; set; }
         public ShoppingCartId Id { get; }
 
+        public IReadOnlyCollection<BasketItem> Items => this.items;
+
         public decimal Total
-        {
-            get
-            {
-                return new BasketCalculator(new StockController(new Inventory()))
-                    .Calculate(this.Items);
-            }
-        }
+            => new BasketCalculator(this.inventory).Calculate(this.Items);
 
         public virtual void Add(BasketItem item)
         {
