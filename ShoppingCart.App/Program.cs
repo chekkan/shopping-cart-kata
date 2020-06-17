@@ -35,11 +35,26 @@ namespace ShoppingCart.App
 
             shoppingBasketService.AddItem(kim, theHobbit, 1);
 
-            // var johnsCart = shoppingBasketService.BasketFor(john);
-            // var kimsCart = shoppingBasketService.BasketFor(kim);
+            var johnsCart = shoppingBasketService.BasketFor(john);
+            var kimsCart = shoppingBasketService.BasketFor(kim);
 
+            Console.WriteLine($"John's basket total: {johnsCart.Total}");
+            Console.WriteLine($"Kim's basket total: {kimsCart.Total}");
+
+            var johnsPayment = new PaymentDetails();
             var orderService = new OrderService(new OrderIdGenerator());
-            // orderService.Create(john, johnsCart.Id);
+            var paymentGateway = new PretendPaymentGateway();
+            var paymentService = new PaymentService(orderService, paymentGateway);
+            paymentService.MakePayment(john, johnsCart.Id, johnsPayment);
+        }
+    }
+
+    public class PretendPaymentGateway : IPaymentGateway
+    {
+        public PaymentReference Pay(Order order, UserId userId, PaymentDetails payment)
+        {
+            Console.WriteLine($"Received payment from {userId}.");
+            return new PaymentReference();
         }
     }
 
