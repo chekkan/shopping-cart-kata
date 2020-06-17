@@ -26,7 +26,7 @@ namespace ShoppingCart
             }
         }
 
-        public void Add(BasketItem item)
+        public virtual void Add(BasketItem item)
         {
             this.items.Add(item);
         }

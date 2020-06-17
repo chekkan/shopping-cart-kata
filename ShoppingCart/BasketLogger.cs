@@ -13,13 +13,14 @@ namespace ShoppingCart
             this.writer = writer;
         }
 
-        public new void Add(BasketItem item)
+        public override void Add(BasketItem item)
         {
             base.Add(item);
             this.writer.WriteLine($"[ITEM ADDED TO SHOPPING CART]: " +
                 $"User[{this.UserId}], " +
                 $"Product[{item.ProductId}], " +
                 $"Quantity[{item.Quantity}]");
+            this.writer.Flush();
         }
     }
 }
