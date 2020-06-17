@@ -9,9 +9,10 @@ namespace ShoppingCart.UnitTests
         [InlineData(20)]
         public void CheckAvailabilty_ReturnsTrue(int quantity)
         {
-            var sut = new StockController();
+            var inventory = new Inventory();
             ProductId lor = new ProductId(1001);
-            sut.AddProduct(lor, 20);
+            inventory.Add(lor, 20);
+            var sut = new StockController(inventory);
             Assert.True(sut.CheckAvailability(lor, quantity));
         }
 
@@ -20,27 +21,30 @@ namespace ShoppingCart.UnitTests
         [InlineData(19)]
         public void CheckAvailability_ReturnsFalse(int quantity)
         {
-            var sut = new StockController();
+            var inventory = new Inventory();
             var hobbit = new ProductId(1002);
-            sut.AddProduct(hobbit, 10);
+            inventory.Add(hobbit, 10);
+            var sut = new StockController(inventory);
             Assert.False(sut.CheckAvailability(hobbit, quantity));
         }
 
         [Fact]
         public void CheckAvailability_WithMultipleProducts()
         {
-            var sut = new StockController();
+            var inventory = new Inventory();
             var hobbit = new ProductId(1002);
             var lor = new ProductId(1001);
-            sut.AddProduct(hobbit, 10);
-            sut.AddProduct(lor, 20);
+            inventory.Add(hobbit, 10);
+            inventory.Add(lor, 20);
+            var sut = new StockController(inventory);
             Assert.False(sut.CheckAvailability(hobbit, 11));
         }
 
         [Fact]
         public void CheckAvailability_ReturnsFalseWhenProductIsNotInitiallyAdded()
         {
-            var sut = new StockController();
+            var inventory = new Inventory();
+            var sut = new StockController(inventory);
             Assert.False(sut.CheckAvailability(new ProductId(1001), 1));
         }
 
@@ -49,9 +53,10 @@ namespace ShoppingCart.UnitTests
         [InlineData(42)]
         public void CheckAvailability_AfterReserving(int quantity)
         {
+            var inventory = new Inventory();
             ProductId lor = new ProductId(1002);
-            var sut = new StockController();
-            sut.AddProduct(lor, quantity);
+            inventory.Add(lor, quantity);
+            var sut = new StockController(inventory);
             sut.Reserve(lor, quantity);
             Assert.False(sut.CheckAvailability(lor, 1));
         }
@@ -59,8 +64,10 @@ namespace ShoppingCart.UnitTests
         [Fact]
         public void PriceForDvds()
         {
-            var sut = new StockController();
-            sut.AddProduct(new ProductId(20001), 1);
+            var inventory = new Inventory();
+            inventory.Add(new ProductId(20001), 1);
+
+            var sut = new StockController(inventory);
             var actual = sut.PriceFor(new ProductId(20001));
             Assert.Equal(9m, actual);
         }

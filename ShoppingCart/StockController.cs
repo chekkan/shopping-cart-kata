@@ -6,10 +6,12 @@ namespace ShoppingCart
     public class StockController
     {
         private Dictionary<ProductId, int> stocks;
+        private Inventory inventory;
         private Dictionary<ProductId, decimal> prices;
 
-        public StockController()
+        public StockController(Inventory inventory)
         {
+            this.inventory = inventory;
             this.stocks = new Dictionary<ProductId, int>();
             this.prices = new Dictionary<ProductId, decimal>()
             {
@@ -20,22 +22,19 @@ namespace ShoppingCart
             };
         }
 
-        public void AddProduct(ProductId productId, int quantity)
-        {
-            this.stocks.Add(productId, quantity);
-        }
-
         public bool CheckAvailability(ProductId productId, int quantity)
         {
-            var product = this.stocks.FirstOrDefault(stock => stock.Key == productId);
-            var stockQty = product.Value;
-            return stockQty >= quantity;
+            var stockQty = this.inventory.QuantityFor(productId);
+            return stockQty != null && stockQty >= quantity;
         }
 
         public void Reserve(ProductId productId, int quantity)
         {
-            var product = this.stocks.First(stock => stock.Key == productId);
-            this.stocks[product.Key] -= quantity;
+            var stockQty = this.inventory.QuantityFor(productId);
+            if (stockQty != null)
+            {
+                this.inventory.SetQuantityFor(productId, stockQty.Value - quantity);
+            }
         }
 
         public decimal PriceFor(ProductId productId) 

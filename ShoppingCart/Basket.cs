@@ -21,7 +21,7 @@ namespace ShoppingCart
         {
             get
             {
-                return new BasketCalculator(new StockController())
+                return new BasketCalculator(new StockController(new Inventory()))
                     .Calculate(this.Items);
             }
         }

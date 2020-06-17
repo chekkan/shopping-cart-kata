@@ -15,9 +15,10 @@ namespace ShoppingCart.UnitTests
 
         public ShoppingBasketServiceTests()
         {
-            stockController = new StockController();
-            stockController.AddProduct(lor, 5);
-            stockController.AddProduct(hobbit, 5);
+            var inventory = new Inventory();
+            inventory.Add(lor, 5);
+            inventory.Add(hobbit, 5);
+            stockController = new StockController(inventory);
         }
 
         [Fact]
@@ -68,8 +69,9 @@ namespace ShoppingCart.UnitTests
         {
             var repoMock = new Mock<IBasketRepository>();
             var basketFactoryMock = new Mock<IBasketFactory>();
-            var stock = new StockController();
-            stock.AddProduct(hobbit, 20);
+            var inventory = new Inventory();
+            inventory.Add(hobbit, 20);
+            var stock = new StockController(inventory);
             var sut = new ShoppingBasketService(repoMock.Object,
                                                 basketFactoryMock.Object,
                                                 stock);

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace ShoppingCart
 {
@@ -15,6 +17,17 @@ namespace ShoppingCart
         public void Add(ProductId productId, int quantity)
         {
             this.items.Add(new InventoryItem(productId, quantity));
+        }
+
+        public int? QuantityFor(ProductId productId)
+        {
+            return this.items
+                .SingleOrDefault(i => i.ProductId == productId)?.Quantity;
+        }
+
+        public void SetQuantityFor(ProductId productId, int value)
+        {
+            this.items.SingleOrDefault(i => i.ProductId == productId).Quantity = value;
         }
 
         public void Print(TextWriter writer)
@@ -34,7 +47,7 @@ namespace ShoppingCart
             }
 
             public ProductId ProductId { get; }
-            public int Quantity { get; }
+            public int Quantity { get; set; }
         }
     }
 }
