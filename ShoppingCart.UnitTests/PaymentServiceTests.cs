@@ -14,6 +14,7 @@ namespace ShoppingCart.UnitTests
         private readonly PaymentDetails payment;
         private readonly Mock<IPaymentGateway> paymentGatewayMock;
         private readonly Mock<IOrderService> orderSvcMock;
+        private readonly Mock<IOrderConfirmation> orderConfirmationStub;
         private readonly Inventory inventory;
         private readonly PaymentService sut;
 
@@ -23,13 +24,15 @@ namespace ShoppingCart.UnitTests
             this.payment = new PaymentDetails();
             this.orderSvcMock = new Mock<IOrderService>();
             this.paymentGatewayMock = new Mock<IPaymentGateway>();
+            this.orderConfirmationStub = new Mock<IOrderConfirmation>();
             var purchaseSystemStub = new Mock<IPurchaseSystem>().Object;
             this.inventory = new Inventory(purchaseSystemStub);
             this.inventory.Add(lordOfTheRings, 4, 10m);
             this.inventory.Add(hobbit, 4, 5m);
             this.sut = new PaymentService(orderSvcMock.Object,
                                           paymentGatewayMock.Object,
-                                          this.inventory);
+                                          this.inventory,
+                                          this.orderConfirmationStub.Object);
         }
 
         [Fact]
@@ -91,6 +94,24 @@ namespace ShoppingCart.UnitTests
             this.sut.MakePayment(ryan, cartId, payment);
             Assert.Equal(2, this.inventory.AvailableQuantity(lordOfTheRings));
             Assert.Equal(1, this.inventory.AvailableQuantity(hobbit));
+        }
+
+        [Fact]
+        public void SendOrderConfirmation()
+        {
+            var basket = new Basket(ryan,
+                                    DateTime.Parse("2020-12-01"),
+                                    this.inventory);
+            var orderId = new OrderId(Guid.NewGuid().ToString());
+            var order = new Order(orderId, basket);
+            orderSvcMock.Setup(svc => svc.Create(ryan, cartId)).Returns(order);
+            var paymentRef = new PaymentReference();
+            this.paymentGatewayMock.Setup(svc => svc.Pay(order, ryan, payment))
+                .Returns(paymentRef);
+
+            this.sut.MakePayment(ryan, cartId, payment);
+            this.orderConfirmationStub
+                .Verify(oc => oc.Send(ryan, orderId, paymentRef));
         }
     }
 }

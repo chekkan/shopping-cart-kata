@@ -47,10 +47,23 @@ namespace ShoppingCart.App
             var johnsPayment = new PaymentDetails();
             var orderService = new OrderService(new OrderIdGenerator(), basketRepository);
             var paymentGateway = new PretendPaymentGateway();
-            var paymentService = new PaymentService(orderService, paymentGateway, inventory);
+            var orderConfirmation = new PretendOrderConfirmation();
+            var paymentService = new PaymentService(orderService,
+                                                    paymentGateway,
+                                                    inventory,
+                                                    orderConfirmation);
             paymentService.MakePayment(john, johnsCart.Id, johnsPayment);
 
             inventory.Print(Console.Out);
+        }
+    }
+
+    public class PretendOrderConfirmation : IOrderConfirmation
+    {
+        public void Send(UserId userId,
+                         OrderId orderId,
+                         PaymentReference paymentReference)
+        {
         }
     }
 

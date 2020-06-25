@@ -8,14 +8,17 @@ namespace ShoppingCart
         private readonly IOrderService orderService;
         private readonly IPaymentGateway paymentGateway;
         private readonly Inventory inventory;
+        private readonly IOrderConfirmation orderConfirmation;
 
         public PaymentService(IOrderService orderService,
                               IPaymentGateway paymentGateway,
-                              Inventory inventory)
+                              Inventory inventory,
+                              IOrderConfirmation orderConfirmation)
         {
             this.orderService = orderService;
             this.paymentGateway = paymentGateway;
             this.inventory = inventory;
+            this.orderConfirmation = orderConfirmation;
         }
 
         public void MakePayment(UserId userId,
@@ -25,7 +28,8 @@ namespace ShoppingCart
             var order = this.orderService.Create(userId, cartId);
             try
             {
-                this.paymentGateway.Pay(order, userId, payment);
+                var paymentReference = this.paymentGateway.Pay(order, userId, payment);
+                this.orderConfirmation.Send(userId, order.Id, paymentReference);
                 foreach (var item in order.Items)
                 {
                     this.inventory.Sold(item.ProductId, item.Quantity);
