@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Moq;
 using Xunit;
 
 namespace ShoppingCart.UnitTests
@@ -11,12 +12,14 @@ namespace ShoppingCart.UnitTests
         [InlineData("doe", 10002, 8)]
         public void LogsOnAddItem(string uId, int pId, int quantity)
         {
+            var purchaseSystemStub = new Mock<IPurchaseSystem>().Object;
+            var inventory = new Inventory(purchaseSystemStub);
             var expected = $"[ITEM ADDED TO SHOPPING CART]: User[{uId}], Product[{pId}], Quantity[{quantity}]\n";
             var writer = new StringWriter();
             var sut = new BasketLogger(writer,
                                        new UserId(uId),
                                        DateTime.Parse("2020-02-12"),
-                                       new Inventory());
+                                       inventory);
             sut.Add(new BasketItem(new ProductId(pId), quantity));
             var sb = writer.GetStringBuilder();
             var actual = sb.ToString();

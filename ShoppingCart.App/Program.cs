@@ -6,12 +6,14 @@ namespace ShoppingCart.App
     {
         static void Main(string[] args)
         {
+            var productSystem = new PretendPurchaseSystem();
+
             var lordOfTheRings = new ProductId(10001);
             var theHobbit = new ProductId(10002);
             var gameOfThrones = new ProductId(20001);
             var breakingBad = new ProductId(20110);
 
-            var inventory = new Inventory();
+            var inventory = new Inventory(productSystem);
             inventory.Add(lordOfTheRings, 10, 10m);
             inventory.Add(theHobbit, 12, 5m);
             inventory.Add(gameOfThrones, 8, 9m);
@@ -49,6 +51,13 @@ namespace ShoppingCart.App
             paymentService.MakePayment(john, johnsCart.Id, johnsPayment);
 
             inventory.Print(Console.Out);
+        }
+    }
+
+    public class PretendPurchaseSystem : IPurchaseSystem
+    {
+        public void OrderMore(ProductId productId, int actualQuantity)
+        {
         }
     }
 

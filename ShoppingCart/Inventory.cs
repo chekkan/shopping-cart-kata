@@ -7,11 +7,14 @@ namespace ShoppingCart
 {
     public class Inventory
     {
+        private const int THRESHOLD = 20;
         private List<InventoryItem> items;
+        private readonly IPurchaseSystem purchaseSystem;
 
-        public Inventory()
+        public Inventory(IPurchaseSystem purchaseSystem)
         {
             this.items = new List<InventoryItem>();
+            this.purchaseSystem = purchaseSystem;
         }
 
         public void Add(ProductId productId, int quantity, decimal price)
@@ -48,6 +51,10 @@ namespace ShoppingCart
             var sellCount = product.ReservedCount - quantity;
             product.ReservedCount = Math.Max(0, sellCount);
             product.Quantity -= quantity;
+            if (product.Quantity < THRESHOLD)
+            {
+                this.purchaseSystem.OrderMore(productId, product.Quantity);
+            }
         }
 
         public void Print(TextWriter writer)

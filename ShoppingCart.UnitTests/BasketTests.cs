@@ -1,4 +1,5 @@
 using System;
+using Moq;
 using Xunit;
 
 namespace ShoppingCart.UnitTests
@@ -13,7 +14,8 @@ namespace ShoppingCart.UnitTests
 
         public BasketTests()
         {
-            var inventory = new Inventory();
+            var purchaseSystemStub = new Mock<IPurchaseSystem>().Object;
+            var inventory = new Inventory(purchaseSystemStub);
             inventory.Add(lordOfTheRings, 10, 10m);
             inventory.Add(hobbit, 12, 5m);
             inventory.Add(gameOfThrones, 5, 9m);

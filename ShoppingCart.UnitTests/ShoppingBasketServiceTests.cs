@@ -20,7 +20,8 @@ namespace ShoppingCart.UnitTests
 
         public ShoppingBasketServiceTests()
         {
-            this.inventory = new Inventory();
+            var purchaseSystemStub = new Mock<IPurchaseSystem>().Object;
+            this.inventory = new Inventory(purchaseSystemStub);
             this.inventory.Add(lor, 5, 10m);
             this.inventory.Add(hobbit, 5, 5m);
 

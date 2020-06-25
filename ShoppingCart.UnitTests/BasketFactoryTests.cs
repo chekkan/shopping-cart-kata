@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Moq;
 using Xunit;
 
 namespace ShoppingCart.UnitTests
@@ -12,7 +13,8 @@ namespace ShoppingCart.UnitTests
         public BasketFactoryTests()
         {
             this.writer = new StringWriter();
-            this.inventory = new Inventory();
+            var purchaseSystemStub = new Mock<IPurchaseSystem>().Object;
+            this.inventory = new Inventory(purchaseSystemStub);
         }
 
         [Fact]

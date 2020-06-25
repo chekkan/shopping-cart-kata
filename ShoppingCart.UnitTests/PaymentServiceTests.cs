@@ -23,7 +23,8 @@ namespace ShoppingCart.UnitTests
             this.payment = new PaymentDetails();
             this.orderSvcMock = new Mock<IOrderService>();
             this.paymentGatewayMock = new Mock<IPaymentGateway>();
-            this.inventory = new Inventory();
+            var purchaseSystemStub = new Mock<IPurchaseSystem>().Object;
+            this.inventory = new Inventory(purchaseSystemStub);
             this.inventory.Add(lordOfTheRings, 4, 10m);
             this.inventory.Add(hobbit, 4, 5m);
             this.sut = new PaymentService(orderSvcMock.Object,
